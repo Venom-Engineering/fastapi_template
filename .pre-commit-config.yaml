@@ -1,0 +1,15 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.7.1
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/astral-sh/ruff
+    rev: 0.5.4
+    hooks:
+    -   id: ruff
+-   repo: https://github.com/pycqa/pylint
+    rev: v3.2.6
+    hooks:
+    -   id: pylint

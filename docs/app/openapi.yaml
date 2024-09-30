@@ -1,0 +1,409 @@
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          title: Detail
+          type: array
+      title: HTTPValidationError
+      type: object
+    Item:
+      properties:
+        description:
+          anyOf:
+          - maxLength: 300
+            type: string
+          - type: 'null'
+          examples:
+          - A very nice Item
+          title: The description of the item
+        name:
+          examples:
+          - Foo
+          title: Name
+          type: string
+        price:
+          description: The price must be greater than zero
+          exclusiveMinimum: 0.0
+          title: Price
+          type: number
+        tax:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Tax
+      required:
+      - name
+      - price
+      title: Item
+      type: object
+    ModelName:
+      enum:
+      - alexnet
+      - resnet
+      - lenet
+      title: ModelName
+      type: string
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+      type: object
+info:
+  description: "\nA templaste api for anyone who just want the minimal requirement\
+    \ for deploying data \U0001F680\n\n## Items\n\n**subapp_1**: exemple of router\
+    \ 1 \n\n**subapp_2**: exemple of router 2\n\n## Users\n\n* **anyone who need it**\n"
+  title: API template
+  version: 0.0.1
+openapi: 3.1.0
+paths:
+  /subapp_1/:
+    get:
+      operationId: root_subapp_1__get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      summary: Root
+      tags:
+      - subapp_1
+  /subapp_1/items/{item_id}:
+    get:
+      operationId: read_item_subapp_1_items__item_id__get
+      parameters:
+      - in: path
+        name: item_id
+        required: true
+        schema:
+          title: Item Id
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Read Item
+      tags:
+      - subapp_1
+  /subapp_1/models/{model_name}:
+    get:
+      operationId: get_model_subapp_1_models__model_name__get
+      parameters:
+      - in: path
+        name: model_name
+        required: true
+        schema:
+          $ref: '#/components/schemas/ModelName'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Model
+      tags:
+      - subapp_1
+  /subapp_1/users/me:
+    get:
+      operationId: read_user_me_subapp_1_users_me_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      summary: Read User Me
+      tags:
+      - subapp_1
+  /subapp_2/items:
+    get:
+      operationId: read_items_subapp_2_items_get
+      parameters:
+      - description: Query string for the items to search in the database that have
+          a good match
+        in: query
+        name: item-query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 50
+            minLength: 3
+            pattern: ^fixedquery$
+            type: string
+          - type: 'null'
+          description: Query string for the items to search in the database that have
+            a good match
+          title: Query string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Read Items
+      tags:
+      - subapp_2
+      - items
+  /subapp_2/items/multiples:
+    get:
+      operationId: read_items_multiple_subapp_2_items_multiples_get
+      parameters:
+      - in: query
+        name: q
+        required: false
+        schema:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Q
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Read Items Multiple
+      tags:
+      - subapp_2
+      - items
+  /subapp_2/items/{item_id}:
+    get:
+      operationId: read_items_path_query_subapp_2_items__item_id__get
+      parameters:
+      - in: path
+        name: item_id
+        required: true
+        schema:
+          maximum: 1000
+          minimum: 0
+          title: The ID of the item to get
+          type: integer
+      - in: query
+        name: q
+        required: true
+        schema:
+          maxLength: 50
+          minLength: 3
+          title: The ID of the item to get
+          type: string
+      - in: query
+        name: size
+        required: true
+        schema:
+          exclusiveMaximum: 10.5
+          exclusiveMinimum: 0.0
+          title: Size
+          type: number
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Read Items Path Query
+      tags:
+      - subapp_2
+      - items_different
+  /subapp_2/items_post:
+    post:
+      description: Create an item with all the information, name, description, price,
+        tax and a set of unique tags
+      operationId: create_item_subapp_2_items_post_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/Item'
+              examples:
+              - description: A very nice Item
+                name: Foo
+                price: 35.4
+                tax: 3.2
+              title: Item
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: The created item
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Create an item
+      tags:
+      - subapp_2
+  /subapp_2/multi_responsez_model:
+    get:
+      operationId: multi_responsez_model_subapp_2_multi_responsez_model_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Item'
+                title: Response Multi Responsez Model Subapp 2 Multi Responsez Model
+                  Get
+                type: array
+          description: Successful Response
+      summary: Multi Responsez Model
+      tags:
+      - subapp_2
+  /subapp_2/response_model:
+    get:
+      operationId: response_model_subapp_2_response_model_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+          description: Successful Response
+      summary: Response Model
+      tags:
+      - subapp_2
+  /subapp_2/simple_float:
+    get:
+      operationId: simple_float_subapp_2_simple_float_get
+      parameters:
+      - in: query
+        name: q
+        required: false
+        schema:
+          default: 1.0
+          title: Q
+          type: number
+      - in: query
+        name: p
+        required: false
+        schema:
+          default: 2.0
+          title: P
+          type: number
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Simple Float
+      tags:
+      - subapp_2
+      - simple
+  /subapp_2/simple_int:
+    get:
+      operationId: simple_int_subapp_2_simple_int_get
+      parameters:
+      - in: query
+        name: q
+        required: false
+        schema:
+          default: 1
+          title: Q
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Simple Int
+      tags:
+      - subapp_2
+      - simple
+  /subapp_2/simple_str:
+    get:
+      operationId: simple_str_subapp_2_simple_str_get
+      parameters:
+      - in: query
+        name: q
+        required: false
+        schema:
+          default: lol
+          title: Q
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Simple Str
+      tags:
+      - subapp_2
+      - simple
